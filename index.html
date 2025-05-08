@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DiGiCare DM</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: url('ChatGPT Image 8 Mei 2025, 10.54.12.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #000;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      color: white;
+      font-size: 28px;
+    }
+
+    .container {
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      width: 80%;
+      max-width: 600px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 80%;
+      padding: 10px;
+      border: 2px solid #00796b;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .button {
+      background-color: #00796b;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #004d40;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .clap-animation {
+      font-size: 50px;
+      animation: clapping 0.5s infinite alternate;
+    }
+
+    .message {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    @keyframes clapping {
+      0% { transform: rotate(-20deg); }
+      100% { transform: rotate(20deg); }
+    }
+
+    .feedback {
+      font-size: 30px;
+      margin-top: 20px;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .incorrect {
+      color: red;
+    }
+
+    ul {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Selamat Datang di DiGiCare DM</h1>
+  </header>
+
+  <div class="container" id="input-section">
+    <h2>Masukkan Nama Anda</h2>
+    <input type="text" id="userName" placeholder="Nama Anda" required />
+    <div id="nameClap" class="clap-animation hidden">👏</div>
+    <button class="button" id="continueButton">Lanjutkan</button>
+  </div>
+
+  <div class="container hidden" id="gds-section">
+    <h2>Masukkan Nilai GDS Anda</h2>
+    <input type="number" id="gdsValue" placeholder="Nilai GDS" required />
+    <div id="gdsClap" class="clap-animation hidden">👏</div>
+    <button class="button" id="gdsContinueButton">Lanjutkan</button>
+  </div>
+
+  <div class="container hidden" id="gds-message-section">
+    <div id="gdsMessageText" class="message"></div>
+    <div id="gdsIcon" class="clap-animation">👏</div>
+  </div>
+
+  <div class="container hidden" id="age-selection">
+    <h2>Pilih Usia Anda</h2>
+    <button class="button" id="ageUnder18">≤ 18 tahun</button>
+    <button class="button" id="ageOver18">> 18 tahun</button>
+    <button class="button" id="backButton">Kembali</button>
+  </div>
+
+  <div class="container hidden" id="message-section">
+    <div class="clap-animation">👏</div>
+    <div class="message">Kamu Hebat!</div>
+  </div>
+
+  <div class="container hidden" id="question-section">
+    <h2 id="question"></h2>
+    <button class="button" id="answer1"></button>
+    <button class="button" id="answer2"></button>
+    <div id="feedback" class="feedback hidden"></div>
+  </div>
+
+  <div class="container hidden" id="advice-section">
+    <h2>Bahaya Diabetes Melitus</h2>
+    <p><strong>Bahaya Diabetes:</strong> Jika tidak ditangani, diabetes dapat menyebabkan komplikasi serius seperti penyakit jantung, gagal ginjal, kerusakan saraf, kebutaan, hingga amputasi.</p>
+    <p><strong>Cara Pencegahan:</strong></p>
+    <ul>
+      <li>Menerapkan pola makan sehat dan seimbang</li>
+      <li>Rutin berolahraga minimal 30 menit sehari</li>
+      <li>Menghindari makanan tinggi gula dan lemak jenuh</li>
+      <li>Menjaga berat badan ideal</li>
+      <li>Rutin memeriksa kadar gula darah</li>
+      <li>Kelola stres dan tidur yang cukup</li>
+    </ul>
+    <p><strong>Ingat:</strong> Pencegahan lebih baik daripada pengobatan.</p>
+  </div>
+
+  <audio id="clapSound" src="https://www.soundjay.com/human/applause-01.mp3" preload="auto"></audio>
+
+  <script>
+    const userNameInput = document.getElementById('userName');
+    const gdsInput = document.getElementById('gdsValue');
+    const continueButton = document.getElementById('continueButton');
+    const gdsContinueButton = document.getElementById('gdsContinueButton');
+    const nameClap = document.getElementById('nameClap');
+    const gdsClap = document.getElementById('gdsClap');
+    const clapSound = document.getElementById('clapSound');
+
+    const inputSection = document.getElementById('input-section');
+    const gdsSection = document.getElementById('gds-section');
+    const ageSelection = document.getElementById('age-selection');
+    const messageSection = document.getElementById('message-section');
+    const questionSection = document.getElementById('question-section');
+    const questionElement = document.getElementById('question');
+    const answer1 = document.getElementById('answer1');
+    const answer2 = document.getElementById('answer2');
+    const feedback = document.getElementById('feedback');
+    const backButton = document.getElementById('backButton');
+    const adviceSection = document.getElementById('advice-section');
+    const gdsMessageSection = document.getElementById('gds-message-section');
+    const gdsMessageText = document.getElementById('gdsMessageText');
+    const gdsIcon = document.getElementById('gdsIcon');
+
+    let currentQuestionIndex = 0;
+    const questions = [
+      { question: "Apa itu Diabetes Melitus?", answers: ["Penyakit jantung", "Penyakit gula"], correct: 1 },
+      { question: "Apa gejala umum diabetes?", answers: ["Sering haus", "Sakit kepala"], correct: 0 },
+      { question: "Apa yang harus dilakukan jika kadar gula darah tinggi?", answers: ["Minum air", "Makan makanan manis"], correct: 0 },
+      { question: "Apa yang dapat membantu mengontrol diabetes?", answers: ["Olahraga", "Tidur"], correct: 0 },
+      { question: "Apa yang harus dihindari oleh penderita diabetes?", answers: ["Makanan manis", "Sayuran"], correct: 0 },
+      { question: "Berapa kadar gula darah normal?", answers: ["70-130 mg/dL", "200-300 mg/dL"], correct: 0 },
+      { question: "Apa yang dimaksud dengan insulin?", answers: ["Hormon", "Vitamin"], correct: 0 },
+      { question: "Siapa yang berisiko tinggi terkena diabetes?", answers: ["Orang tua", "Anak-anak"], correct: 0 },
+      { question: "Apa yang harus dilakukan untuk mencegah diabetes?", answers: ["Diet sehat", "Makan junk food"], correct: 0 },
+      { question: "Apa yang terjadi jika diabetes tidak diobati?", answers: ["Komplikasi serius", "Tidak ada efek"], correct: 0 }
+    ];
+
+    userNameInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") continueButton.click();
+    });
+    gdsInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") gdsContinueButton.click();
+    });
+
+    continueButton.addEventListener('click', function () {
+      const userName = userNameInput.value;
+      if (userName) {
+        nameClap.classList.remove('hidden');
+        clapSound.currentTime = 0;
+        clapSound.play();
+        setTimeout(() => {
+          inputSection.classList.add('hidden');
+          gdsSection.classList.remove('hidden');
+          nameClap.classList.add('hidden');
+        }, 1000);
+      }
+    });
+
+    gdsContinueButton.addEventListener('click', function () {
+      const gdsValue = parseFloat(gdsInput.value);
+      if (!isNaN(gdsValue)) {
+        gdsSection.classList.add('hidden');
+        if (gdsValue < 200) {
+          gdsMessageText.textContent = "👏 Anda Hebat! Pertahankan gula darah Anda!";
+          gdsMessageText.className = "message correct";
+          gdsIcon.textContent = "👏";
+        } else {
+          gdsMessageText.textContent = "⚠️ Gula darah Anda tinggi. Segera lakukan pemeriksaan ke fasilitas layanan kesehatan.";
+          gdsMessageText.className = "message incorrect";
+          gdsIcon.textContent = "⚠️";
+        }
+
+        gdsMessageSection.classList.remove('hidden');
+
+        setTimeout(() => {
+          gdsMessageSection.classList.add('hidden');
+          ageSelection.classList.remove('hidden');
+        }, 4000);
+      }
+    });
+
+    document.getElementById('ageUnder18').addEventListener('click', showMotivationBeforeQuiz);
+    document.getElementById('ageOver18').addEventListener('click', showMotivationBeforeQuiz);
+
+    function showMotivationBeforeQuiz() {
+      ageSelection.classList.add('hidden');
+      messageSection.classList.remove('hidden');
+      clapSound.currentTime = 0;
+      clapSound.play();
+      setTimeout(() => {
+        messageSection.classList.add('hidden');
+        questionSection.classList.remove('hidden');
+        loadQuestion();
+      }, 3000);
+    }
+
+    backButton.addEventListener('click', function () {
+      ageSelection.classList.add('hidden');
+      inputSection.classList.remove('hidden');
+    });
+
+    function loadQuestion() {
+      feedback.classList.add('hidden');
+      if (currentQuestionIndex < questions.length) {
+        questionElement.textContent = questions[currentQuestionIndex].question;
+        answer1.textContent = questions[currentQuestionIndex].answers[0];
+        answer2.textContent = questions[currentQuestionIndex].answers[1];
+        answer1.onclick = () => checkAnswer(0);
+        answer2.onclick = () => checkAnswer(1);
+      } else {
+        questionElement.textContent = "Terima kasih telah menjawab!";
+        answer1.classList.add('hidden');
+        answer2.classList.add('hidden');
+        adviceSection.classList.remove('hidden');
+      }
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentQuestionIndex].correct;
+      feedback.classList.remove('hidden');
+      if (selected === correct) {
+        feedback.textContent = "👍 Kamu Hebat!";
+        feedback.className = "feedback correct";
+        currentQuestionIndex++;
+        setTimeout(loadQuestion, 2000);
+      } else {
+        feedback.textContent = "❌ Coba lagi ya!";
+        feedback.className = "feedback incorrect";
+        setTimeout(() => feedback.classList.add('hidden'), 2000);
+      }
+    }
+  </script>
+</body>
+</html>
